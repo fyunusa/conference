@@ -1,0 +1,362 @@
+{
+    "conferences": [
+        {
+            "name": "St. Andrew",
+            "address": "1660 North Main St., Butler, PA 16001",
+            "phone": "724-287-7781"
+        },
+        {
+            "name": "Archangel Gabriel",
+            "address": "343 Forest Grove Rd., Coraopolis, PA 15108",
+            "phone": "412-787-2140"
+        },
+        {
+            "name": "Assumption",
+            "address": "19 Wilson Street, Pittsburgh, PA 15223",
+            "phone": "412-781-0530"
+        },
+        {
+            "name": "St. Bartholomew",
+            "address": "111 Erhardt Dr., Pittsburgh, PA 15235",
+            "phone": "412-242-3374"
+        },
+        {
+            "name": "St. Blaise",
+            "address": "772 Ohio Ave., Midland, PA 15059",
+            "phone": "724-312-4783"
+        },
+        {
+            "name": "Blessed Trinity",
+            "address": "3198 Schieck Ave., Pittsburgh, PA 15227",
+            "phone": "412-884-7744"
+        },
+        {
+            "name": "St. Catherine of Sweden",
+            "address": "2554 Wildwood Rd., Allison Park, PA 15101",
+            "phone": "412-486-6001"
+        },
+        {
+            "name": "Christ the Divine Sheherd",
+            "address": "2526 Haymaker Rd., Monroeville, PA 15146",
+            "phone": "412-436-9208, 412-373-0050, Ext. 111 for the Penn Hills/Verona area"
+        },
+        {
+            "name": "Christ the Shepherd",
+            "address": "720 Arch St., Pittsburgh, PA 15212",
+            "phone": "412-321-0711, 412-254-3689"
+        },
+        {
+            "name": "Corpus Christi Parish",
+            "address": "212 Station St., Bridgeville, PA 15017",
+            "phone": "412-564-3191"
+        },
+        {
+            "name": "Divine Redeemer",
+            "address": "200 Walnut St., Sewickley, PA 15143",
+            "phone": "412-741-6650, option 8"
+        },
+        {
+            "name": "St. Ferdinand",
+            "address": "2535 Rochester Rd., Cranberry Twp. 16066",
+            "phone": "724-776-2888"
+        },
+        {
+            "name": "St. Fidelis",
+            "address": "125 Buttercup Rd., Butler, PA 16001",
+            "phone": "724-482-2690"
+        },
+        {
+            "name": "St. Francis of Assisi",
+            "address": "Duquesne University, Laval House, 600 Forbes Ave., Pittsburgh, PA 15282"
+        },
+        {
+            "name": "St. Frances Cabrini",
+            "address": "115 Trinity Dr., Aliquippa, PA 15001",
+            "phone": "724-775-6363, Conf: 412 370 1497"
+        },
+        {
+            "name": "St. Gabriel",
+            "address": "2710 Ohio St., Bethel Park, PA 15102",
+            "phone": "412-831-8312"
+        },
+        {
+            "name": "Good Shepherd",
+            "address": "1025 Braddock Ave., North Braddock, PA 15104",
+            "phone": "412-271-1213, Conf: 412-437-8370"
+        },
+        {
+            "name": "St. Gregory",
+            "address": "2 West Beaver St., Zelienople, PA 16063",
+            "phone": "724-452-7245"
+        },
+        {
+            "name": "Guardian Angel",
+            "address": "787 Freeport Rd., Creighton, PA 15030",
+            "phone": "724-274-7035"
+        },
+        {
+            "name": "Guardian Angels",
+            "address": "1526 Union Ave., Natrona Heights, PA 15065",
+            "phone": "Parish-724-226-4900"
+        },
+        {
+            "name": "Holy Angels",
+            "address": "408 Baldwin Rd., Pittsburgh, PA 15207",
+            "phone": "412-491-6906"
+        },
+        {
+            "name": "Holy Family",
+            "address": "387 Maryland Ave., Oakmont, PA 15139",
+            "phone": "412-330-1510, Conf: 412-426-0874"
+        },
+        {
+            "name": "Holy Sepulcher",
+            "address": "1304 East Cruikshank Rd., Butler, PA 16002",
+            "phone": "724-586-7610"
+        },
+        {
+            "name": "St. Isadore the Farmer",
+            "address": "219 West Lincoln Ave., McDonald, PA 15057",
+            "phone": "412-539-7087"
+        },
+        {
+            "name": "St. James",
+            "address": "119 West Chestnut St., Wahington, PA 15301",
+            "phone": "724-986-5595"
+        },
+        {
+            "name": "St. Joan of Arc",
+            "address": "6414 Montour St., South Park, PA 15129-9513",
+            "phone": "412-283-9450"
+        },
+        {
+            "name": "St. John",
+            "address": "455 Clearfield Rd., Fenelton, PA 16034",
+            "phone": "724-287-7590"
+        },
+        {
+            "name": "St. John XIII",
+            "address": "120 Abbington Dr., McMurray, PA 15317",
+            "phone": "724-941-9406, Ext. 142"
+        },
+        {
+            "name": "John the Baptist (Monaca)",
+            "address": "1501 Virginia Ave., Monaca, PA 15061",
+            "phone": "724-494-8864"
+        },
+        {
+            "name": "St. Joseph",
+            "address": "330 Dorseyville Rd., Pitsburgh, PA 15215",
+            "phone": "412-963-8885"
+        },
+        {
+            "name": "St. Juan Diego",
+            "address": "201 Ninth St., Sharpsburg, PA 15215",
+            "phone": "412-781-2866"
+        },
+        {
+            "name": "St. Jude the Apostle",
+            "address": "405 Westinghouse Ave., Wilmerding, PA 15148",
+            "phone": "412-823-8390"
+        },
+        {
+            "name": "St. Katherine Drexel",
+            "address": "126 Church Street, Bentleyville, PA 15314",
+            "phone": "724-209-1370, Conf: 724-249-4715"
+        },
+        {
+            "name": "St. Kilian",
+            "address": "7076 Franklin Rd., Cranberry Twp., PA 16066",
+            "phone": "724-625-1665"
+        },
+        {
+            "name": "St. Luke the Evangelist",
+            "address": "725 Glenwood Ave., Ambridge, PA 15003",
+            "phone": "412-974-6443"
+        },
+        {
+            "name": "Madonna Del Castello",
+            "address": "2021 South Braddock Ave., Pittsburgh, PA 15218",
+            "phone": "412-519-3675"
+        },
+        {
+            "name": "St. Margaret Mary (Moon Twp.)",
+            "address": "One Parish Place, Moon Twp., PA 15108",
+            "phone": "412-397-7714, Conf: 412-264-2573"
+        },
+        {
+            "name": "St. Maria Goretti",
+            "address": "4712 Liberty Ave., Pittsburgh, PA 15224",
+            "phone": "412-682-2354, Conf: 412-628-2077"
+        },
+        {
+            "name": "St. Maurice",
+            "address": "2001 Ardmore Blvd., Pittsburgh, PA 15221",
+            "phone": "412-271-0809"
+        },
+        {
+            "name": "St. Mary Magdalene",
+            "address": "509 South Dallas Ave., Pittsburgh, PA 15208",
+            "phone": "412-241-1309"
+        },
+        {
+            "name": "Mary, Mother of God (Formerly. St. Robert Bellarmine)",
+            "address": "1640 Fawcett Ave., White Oak, PA 15131",
+            "phone": "412-385-3753"
+        },
+        {
+            "name": "St. Matthew",
+            "address": "2001 Mt. Royal Blvd, Glenshaw, PA 15116",
+            "phone": "412-486-2606, ext. 101"
+        },
+        {
+            "name": "St. Michael",
+            "address": "610 Hansen Ave., Lyndora, PA 16045",
+            "phone": "724-283-0363"
+        },
+        {
+            "name": "St. Michael the Archangel (Formerly St. Bernard, Our Lady of Grace)",
+            "address": "311 Washington Rd., Pittsburgh, PA 15216",
+            "phone": "412-561-3300 ext. 303"
+        },
+        {
+            "name": "St. Michael - Archangel (Butler)",
+            "address": "432 Center Ave., Butler, PA 16001",
+            "phone": "724-287-3994"
+        },
+        {
+            "name": "St. Monica",
+            "address": "116 Thorndale Dr., Bevaer Falls, PA 15010",
+            "phone": "724-846-7540"
+        },
+        {
+            "name": "Most Holy Name of Jesus",
+            "address": "1700 Harpster St., Pittsburgh, PA 15212",
+            "phone": "412-231-2969, Conf: 412-231-2994 Ext. 8"
+        },
+        {
+            "name": "Mother Teresa (Divine Mercy Parish)",
+            "address": "91 Crawford Street, Pittsburgh, PA 15219",
+            "phone": "412-204-7446"
+        },
+        {
+            "name": "Our Lady of the Angels",
+            "address": "225 37th St., Pittsburgh, PA 15201",
+            "phone": "412-682-0929"
+        },
+        {
+            "name": "Our Lady of Fatima",
+            "address": "2270 Broadhead Rd., Aliquippa, PA 15001",
+            "phone": "724-407-3375"
+        },
+        {
+            "name": "Our Lady of Hope",
+            "address": "5200 Greenridge Dr., Pittsburgh, PA 15236",
+            "phone": "412-881-8115"
+        },
+        {
+            "name": "Our Lady of the Lakes (Formerly St. Victor)",
+            "address": "P.O. Box 140, Bairdford Rd., Bairdford, PA 15006"
+        },
+        {
+            "name": "Our Lady of Mt. Carmel (Fomerly St. Atahansius, St. Sebastian)",
+            "address": "311 Siebert Rd., Pittsburgh, PA 15237",
+            "phone": "412-364-8999 ext 8320"
+        },
+        {
+            "name": "Our Lady of Perpetual Help",
+            "address": "2510 Middle Rd., Glenshaw, PA 15116",
+            "phone": "724-939-3483"
+        },
+        {
+            "name": "Our Lady of the Valley",
+            "address": "571 Thompson Ave., Donora, PA 15033",
+            "phone": "724-379-4777"
+        },
+        {
+            "name": "Our Lady of the Valley",
+            "address": "200 Third St., Beaver, PA 15009",
+            "phone": "724-312-6781"
+        },
+        {
+            "name": "St. Oscar Romero (Formerly St. Patrick)",
+            "address": "317 West Pike St., Canonsburg, PA 15317",
+            "phone": "724-745-6560"
+        },
+        {
+            "name": "St. Paul",
+            "address": "128 North McKean St., Butler, PA 16001",
+            "phone": "724-287-3994"
+        },
+        {
+            "name": "St. Paul Cathedral",
+            "address": "411 Greenfield Ave., Pittsburgh, PA 15207",
+            "phone": "412-621-4951"
+        },
+        {
+            "name": "St. Paul of the Cross",
+            "address": "400 Hoodridge Dr., Pittsburgh, PA",
+            "phone": "412-531-5964"
+        },
+        {
+            "name": "St. Philip",
+            "address": "114 Berry St., Pittsburgh, PA 15205",
+            "phone": "412-922-6300, Conf: 412-444-8140"
+        },
+        {
+            "name": "St. Pio of Pietrelcina",
+            "address": "450 Walnut St., Pittsburgh, PA 15238",
+            "phone": "412-828-4066"
+        },
+        {
+            "name": "St. Raphael the Archangel",
+            "address": "330 Third Ave., Carnegie, PA 15106",
+            "phone": "412-444-5424"
+        },
+        {
+            "name": "Resurrection",
+            "address": "126 Fort Couch Rd., Pittsburgh, PA 15241",
+            "phone": "412-283-0245 or 412-564-3411"
+        },
+        {
+            "name": "St. Richard",
+            "address": "3841 Dickey Rd., Gibsonia, PA 15044",
+            "phone": "724-444-1971"
+        },
+        {
+            "name": "Sacred Heart (Emsworth)",
+            "address": "154 Orchard St., Pittsburgh, PA 15202",
+            "phone": "412-7616651"
+        },
+        {
+            "name": "Sacred Heart (Shadyside)",
+            "address": "310 Shady Ave., Pittsburgh, PA 15206",
+            "phone": "412-404-3524"
+        },
+        {
+            "name": "St. Scholastica",
+            "address": "309 Brilliant Ave., Pittsburgh, PA 15215",
+            "phone": "412-254-4446"
+        },
+        {
+            "name": "Hazelwood SVdP",
+            "address": "131 E. Elizabeth Street, Pittsburgh, PA 15207",
+            "phone": "412-353-9853"
+        },
+        {
+            "name": "St. Teresa of Kolkata (Formerly Resurrection-Brookline, St. Pius X, St. Catherine, Our Lady of Loreto, St. Pamphilus)",
+            "address": "1810 Belasco Ave., Pittsburgh, PA 15216",
+            "phone": "412-342-8836"
+        },
+        {
+            "name": "St. Thomas the Apostle (Formerly Resurrection/St. Rita, Maximilian Kolbe/St. Therese of Lisieux/Holy Trinity(West Mifflin))",
+            "address": "One Therese Court, Munhall, PA 15120",
+            "phone": "412-461-2188"
+        },
+        {
+            "name": "St. Titus",
+            "address": "952 Franklin St., Aliquippa, PA 15001",
+            "phone": "724-920-8563"
+        }
+    ]
+}
