@@ -35,6 +35,23 @@
         .autocomplete .autocomplete-item:hover {
             background-color: #f1f1f1;
         }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+
+        /* Add animation for the loader */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -47,12 +64,27 @@
         <div class="autocomplete-items" id="autocompleteItems"></div>
     </div>
     <div id="closestConference"></div>
+    <!-- Add the loader element -->
+    <div class="loader" id="loader"></div>
     
 
     <script>
         const addressInput = document.getElementById('addressInput');
         const autocompleteItems = document.getElementById('autocompleteItems');
         let conferences = []; // To store the loaded conference data
+
+        // Function to show the loader
+        function showLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+        }
+
+        // Function to hide the loader
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'none';
+        }
+
 
         // Function to fetch the conference data from the JSON file
         async function fetchConferenceData() {
@@ -173,10 +205,14 @@
         // Event listener to handle address selection
         async function onAddressSelected(conference) {
             try {
+                showLoader();
+
                 const selectedAddress = addressInput.value;
 
                 // Get the latitude and longitude of the selected address using Nominatim API
                 const selectedGeocode = await getGeocode(selectedAddress);
+
+
 
                 // Get the latitude and longitude of the current location using Geolocation API
                 const customAddress = document.getElementById('customAddressInput').value;
@@ -194,59 +230,32 @@
                 // Calculate the distance between the selected address and the conference's address
                 const distance = haversineDistance(
                     selectedGeocode.lat, selectedGeocode.lon,
-                    conference.lat, conference.lon,
+                    // conference.lat, conference.lon,
+                    currentGeocode.lat, currentGeocode.lon,
+                    
                 );
 
                 // Calculate the distance between the current location and the conference's address
                 const distanceToCurrent = haversineDistance(
                     currentGeocode.lat, currentGeocode.lon,
-                    conference.lat, conference.lon,
+                    // conference.lat, conference.lon,
+                    selectedGeocode.lat, selectedGeocode.lon,
                 );
 
                 // Display the closest conference below the input bar
                 const closestConference = document.getElementById('closestConference');
                 closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
-                closestConference.innerHTML += `<br><strong>Distance to Current Location ${currentLocationName}:</strong> ${distanceToCurrent.toFixed(2)} km`;
+                closestConference.innerHTML += `<br><strong>Distance from ${currentLocationName} to ${conference.name}: </strong> ${distanceToCurrent.toFixed(2)} km`;
+
+                hideLoader();
+
             } catch (error) {
+                hideLoader();
                 // Handle any errors that may occur during distance calculation
                 console.error(error);
+
             }
         }
-
-
-
-        // async function onAddressSelected(conference) {
-        //     try {
-        //         // Get the latitude and longitude of the selected address
-        //         const selectedAddress = addressInput.value;
-        //         const selectedGeocode = await getGeocode(selectedAddress);
-
-        //         // Get the latitude and longitude of the current location
-        //         const currentGeocode = await getGeocode('Zoo road kano, Nigeria');
-
-        //         // Calculate the distance between the selected address and the conference's address
-        //         const distance = haversineDistance(
-        //             selectedGeocode.lat, selectedGeocode.lon,
-        //             conference.lat, conference.lon,
-        //         );
-
-        //         // Calculate the distance between the current location and the conference's address
-        //         const distanceToCurrent = haversineDistance(
-        //             currentGeocode.lat, currentGeocode.lon,
-        //             conference.lat, conference.lon,
-        //         );
-
-        //         // Display the closest conference below the input bar
-        //         const closestConference = document.getElementById('closestConference');
-        //         closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
-        //         closestConference.innerHTML += `<br><strong>Distance to Current Location:</strong> ${distanceToCurrent.toFixed(2)} km`;
-        //     } catch (error) {
-        //         // Handle any errors that may occur during distance calculation
-        //         console.error(error);
-        //     }
-        // }
-
-
 
         // Load conference data and initialize autocomplete
         fetchConferenceData().then(() => {
