@@ -138,6 +138,7 @@
 
         // Function to get the current location using the Geolocation API
         async function getCurrentLocation() {
+
             return new Promise((resolve, reject) => {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
@@ -150,54 +151,45 @@
             });
         }
 
+        // Function to get the location name using the Nominatim API
+        async function getLocationName(lat, lon) {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.display_name) {
+                    return data.display_name;
+                } else {
+                    throw new Error('Location name not found.');
+                }
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        }
 
 
         // Event listener to handle address selection
         async function onAddressSelected(conference) {
             try {
                 const selectedAddress = addressInput.value;
-                const customAddress = document.getElementById('customAddressInput').value;
 
-                // Get the latitude and longitude of the selected address or the custom address
-                const selectedGeocode = customAddress
-                    ? await getGeocode(customAddress)
-                    : await getGeocode(selectedAddress);
-
-                // Get the latitude and longitude of the current location using Geolocation API
-                const currentGeocode = await getCurrentLocation();
-
-                // Calculate the distance between the selected address and the conference's address
-                const distance = haversineDistance(
-                    selectedGeocode.lat, selectedGeocode.lon,
-                    conference.lat, conference.lon,
-                );
-
-                // Calculate the distance between the current location and the conference's address
-                const distanceToCurrent = haversineDistance(
-                    currentGeocode.lat, currentGeocode.lon,
-                    conference.lat, conference.lon,
-                );
-
-                // Display the closest conference below the input bar
-                const closestConference = document.getElementById('closestConference');
-                closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
-                closestConference.innerHTML += `<br><strong>Distance to Current Location:</strong> ${distanceToCurrent.toFixed(2)} km`;
-            } catch (error) {
-                // Handle any errors that may occur during distance calculation
-                console.error(error);
-            }
-        }
-
-
-
-        async function onAddressSelected(conference) {
-            try {
-                // Get the latitude and longitude of the selected address
-                const selectedAddress = addressInput.value;
+                // Get the latitude and longitude of the selected address using Nominatim API
                 const selectedGeocode = await getGeocode(selectedAddress);
 
-                // Get the latitude and longitude of the current location
-                const currentGeocode = await getGeocode('Zoo road kano, Nigeria');
+                // Get the latitude and longitude of the current location using Geolocation API
+                const customAddress = document.getElementById('customAddressInput').value;
+                let currentGeocode;
+
+                if (customAddress.length > 0) {
+                    currentGeocode = await getGeocode(customAddress);
+                } else {
+                    currentGeocode = await getCurrentLocation();
+                }
+
+                // Get the name of the current location using Nominatim API
+                const currentLocationName = await getLocationName(currentGeocode.lat, currentGeocode.lon);
 
                 // Calculate the distance between the selected address and the conference's address
                 const distance = haversineDistance(
@@ -214,12 +206,45 @@
                 // Display the closest conference below the input bar
                 const closestConference = document.getElementById('closestConference');
                 closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
-                closestConference.innerHTML += `<br><strong>Distance to Current Location:</strong> ${distanceToCurrent.toFixed(2)} km`;
+                closestConference.innerHTML += `<br><strong>Distance to Current Location ${currentLocationName}:</strong> ${distanceToCurrent.toFixed(2)} km`;
             } catch (error) {
                 // Handle any errors that may occur during distance calculation
                 console.error(error);
             }
         }
+
+
+
+        // async function onAddressSelected(conference) {
+        //     try {
+        //         // Get the latitude and longitude of the selected address
+        //         const selectedAddress = addressInput.value;
+        //         const selectedGeocode = await getGeocode(selectedAddress);
+
+        //         // Get the latitude and longitude of the current location
+        //         const currentGeocode = await getGeocode('Zoo road kano, Nigeria');
+
+        //         // Calculate the distance between the selected address and the conference's address
+        //         const distance = haversineDistance(
+        //             selectedGeocode.lat, selectedGeocode.lon,
+        //             conference.lat, conference.lon,
+        //         );
+
+        //         // Calculate the distance between the current location and the conference's address
+        //         const distanceToCurrent = haversineDistance(
+        //             currentGeocode.lat, currentGeocode.lon,
+        //             conference.lat, conference.lon,
+        //         );
+
+        //         // Display the closest conference below the input bar
+        //         const closestConference = document.getElementById('closestConference');
+        //         closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
+        //         closestConference.innerHTML += `<br><strong>Distance to Current Location:</strong> ${distanceToCurrent.toFixed(2)} km`;
+        //     } catch (error) {
+        //         // Handle any errors that may occur during distance calculation
+        //         console.error(error);
+        //     }
+        // }
 
 
 
