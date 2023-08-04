@@ -103,6 +103,11 @@
             <button id="submitBtn">Calculate Closest Conferences</button>
         </div>
         <div class="results" id="closestConference"></div>
+        <div class="results" id="closestConference2"></div>
+        <div class="results" id="closestConferenceAddress"></div>
+        <div class="results" id="closestConferencePhone"></div>
+        <div class="results" id="closestConferenceDistance"></div>
+
         <div class="loader" id="loader"></div>
         <input type="text" id="closestConferenceName" value="" hidden>
 
@@ -197,14 +202,20 @@
                 conferencesWithDistances.sort((a, b) => a.distance - b.distance);
 
                 // Display the top 3 closest conferences
-                const closestConferences = conferencesWithDistances.slice(0, 5);
+                const closestConferences = conferencesWithDistances.slice(0, 1);
                 const closestConferenceElement = document.getElementById('closestConference');
+                const closestConferenceElement2 = document.getElementById('closestConference2');
                 const closestConferenceElementName = document.getElementById('closestConferenceName');
-                closestConferenceElement.innerHTML = `<strong>Closest Conferences from ${closestConferenceElementName.value }: </strong><br>`;
+                const closestConferenceElementAddress = document.getElementById('closestConferenceAddress');
+                const closestConferenceElementPhone = document.getElementById('closestConferencePhone');
+                const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
+                closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
 
                 closestConferences.forEach((conference, index) => {
-                    closestConferenceElement.innerHTML +=
-                        `${index + 1}. ${conference.name} (${conference.distance.toFixed(2)} miles)<br>`;
+                    closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
+                    closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
+                    closestConferenceElementPhone.innerHTML += `Phone: ${conference.phone}`;
+                    closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance.toFixed(2)} miles`;
                 });
 
                 hideLoader();
