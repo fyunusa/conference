@@ -4,36 +4,74 @@
     <title>Address Autocomplete</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        .autocomplete {
-            position: relative;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
 
-        .autocomplete input {
-            width: 300px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container input[type="text"] {
+            flex: 1;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
 
-        .autocomplete .autocomplete-items {
-            display: none; /* Hide the autocomplete items by default */
-            position: absolute;
-            border: 1px solid #ccc;
+        .input-container button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
             border-radius: 4px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 99;
-            background-color: #fff;
-        }
-
-        .autocomplete .autocomplete-item {
-            padding: 10px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .autocomplete .autocomplete-item:hover {
-            background-color: #f1f1f1;
+        .input-container button:hover {
+            background-color: #2980b9;
+        }
+
+        .results {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .results strong {
+            font-size: 18px;
+        }
+
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .results li {
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
         .loader {
@@ -56,21 +94,24 @@
 </head>
 <body>
     
-    <h1>Conferences Address Calculator</h1>
-    <div id="errorContainer" style="color: red;"></div>
-    <div class="autocomplete">
-        <input type="text" id="addressInput" placeholder="Enter an address">
-        <input type="text" id="customAddressInput" placeholder="Enter a custom address">
-        <div class="autocomplete-items" id="autocompleteItems"></div>
+    <div class="container">
+        <div class="header">
+            <h1>Conferences Address Calculator</h1>
+        </div>
+        <div class="input-container">
+            <input type="text" id="addressInput" placeholder="Enter an address">
+            <button id="submitBtn">Calculate Closest Conferences</button>
+        </div>
+        <div class="results" id="closestConference"></div>
+        <div class="loader" id="loader"></div>
+        <input type="text" id="closestConferenceName" value="" hidden>
+
+        
     </div>
-    <div id="closestConference"></div>
-    <!-- Add the loader element -->
-    <div class="loader" id="loader"></div>
     
 
-    <script>
-        const addressInput = document.getElementById('addressInput');
-        const autocompleteItems = document.getElementById('autocompleteItems');
+<script>
+    let addressInput = document.getElementById('addressInput');
         let conferences = []; // To store the loaded conference data
 
         // Function to show the loader
@@ -85,6 +126,18 @@
             loader.style.display = 'none';
         }
 
+         // Function to calculate distance using Haversine formula
+         function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 3958.8; // Radius of the earth in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c;
+            return distance;
+        }
 
         // Function to fetch the conference data from the JSON file
         async function fetchConferenceData() {
@@ -108,47 +161,88 @@
             }
         }
 
-
-         // Function to handle address search
-        function searchAddress() {
-            // Get the user input from the input box
-            const userInput = addressInput.value;
-            autocompleteItems.innerHTML = '';
-            autocompleteItems.style.display = userInput.length > 0 ? 'block' : 'none';
-
-            // Show all conference names in autocomplete
-            conferences.forEach(conference => {
-                const item = document.createElement('div');
-                item.classList.add('autocomplete-item');
-                item.innerText = conference.name;
-                item.addEventListener('click', () => {
-                    addressInput.value = conference.name;
-                    autocompleteItems.innerHTML = '';
-                    onAddressSelected(conference); // Pass the conference object here
-                });
-                autocompleteItems.appendChild(item);
+            // Function to get the current location using the Geolocation API
+            async function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const { latitude, longitude } = position.coords;
+                            resolve({ lat: latitude, lon: longitude });
+                        },
+                        error => reject(error)
+                    );
+                } else {
+                    reject(new Error('Geolocation is not supported by this browser.'));
+                }
             });
         }
 
+        // Function to calculate and display the closest conferences
+        async function calculateClosestConferences(targetGeocode) {
+            try {
+                showLoader();
 
-        // Event listener to trigger search on input change
-        addressInput.addEventListener('input', searchAddress);
+                // Calculate distances and sort conferences by distance
+                const conferencesWithDistances = conferences.map(conference => {
+                    const distance = haversineDistance(
+                        targetGeocode.lat, targetGeocode.lon,
+                        conference.lat, conference.lon
+                    );
+                    return { ...conference, distance };
+                });
 
+                // Sort conferences by distance
+                conferencesWithDistances.sort((a, b) => a.distance - b.distance);
 
-        // Function to calculate distance using Haversine formula
-        function haversineDistance(lat1, lon1, lat2, lon2) {
+                // Display the top 3 closest conferences
+                const closestConferences = conferencesWithDistances.slice(0, 5);
+                const closestConferenceElement = document.getElementById('closestConference');
+                const closestConferenceElementName = document.getElementById('closestConferenceName');
+                closestConferenceElement.innerHTML = `<strong>Closest Conferences from ${closestConferenceElementName.value }: </strong><br>`;
 
-            console.log(lat1, lon1, lat2, lon2)
-            const R = 6371; // Radius of the earth in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = R * c;
-            return distance;
+                closestConferences.forEach((conference, index) => {
+                    closestConferenceElement.innerHTML +=
+                        `${index + 1}. ${conference.name} (${conference.distance.toFixed(2)} km)<br>`;
+                });
+
+                hideLoader();
+            } catch (error) {
+                hideLoader();
+                console.error(error);
+            }
         }
+
+        // Event listener for the submit button
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.addEventListener('click', async () => {
+            const selectedAddress = addressInput.value.trim();
+            if (selectedAddress === '') {
+                try {
+                    showLoader();
+                    const currentGeocode = await getCurrentLocation();
+                    const currentLocationName = await getLocationName(currentGeocode.lat, currentGeocode.lon);
+                    document.getElementById('closestConferenceName').value = currentLocationName;
+                    calculateClosestConferences(currentGeocode);
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    hideLoader();
+                }
+            } else {
+                try {
+                    showLoader();
+                    const selectedGeocode = await getGeocode(selectedAddress);
+                    const currentLocationName = await getLocationName(selectedGeocode.lat, selectedGeocode.lon);
+                    document.getElementById('closestConferenceName').value = currentLocationName;
+                    calculateClosestConferences(selectedGeocode);
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    hideLoader();
+                }
+            }
+        });
 
         // Function to get the latitude and longitude of an address using Nominatim API
         async function getGeocode(address) {
@@ -168,23 +262,6 @@
             }
         }
 
-       // Function to get the current location using the Geolocation API
-        async function getCurrentLocation() {
-            return new Promise((resolve, reject) => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        position => {
-                            const { latitude, longitude } = position.coords;
-                            resolve({ lat: latitude, lon: longitude });
-                        },
-                        error => reject(error)
-                    );
-                } else {
-                    reject(new Error('Geolocation is not supported by this browser.'));
-                }
-            });
-        }
-
         // Function to get the location name using the Nominatim API
         async function getLocationName(lat, lon) {
             const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
@@ -202,64 +279,230 @@
                 throw error;
             }
         }
+    </script>
+
+    <script>
+        // const addressInput = document.getElementById('addressInput');
+        // const autocompleteItems = document.getElementById('autocompleteItems');
+        // let conferences = []; // To store the loaded conference data
+
+        // // Function to show the loader
+        // function showLoader() {
+        //     const loader = document.getElementById('loader');
+        //     loader.style.display = 'block';
+        // }
+
+        // // Function to hide the loader
+        // function hideLoader() {
+        //     const loader = document.getElementById('loader');
+        //     loader.style.display = 'none';
+        // }
+
+
+        // Function to fetch the conference data from the JSON file
+        // async function fetchConferenceData() {
+        //     try {
+        //         const response = await fetch('conference.json');
+        //         const data = await response.json();
+        //         conferences = data.conferences;
+
+        //         // Fetch geocode (latitude and longitude) for each conference address
+        //         for (const conference of conferences) {
+        //             try {
+        //                 const geocode = await getGeocode(conference.address);
+        //                 conference.lat = geocode.lat;
+        //                 conference.lon = geocode.lon;
+        //             } catch (error) {
+        //                 console.error(`Error fetching geocode for conference '${conference.name}':`, error);
+        //             }
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching conference data:', error);
+        //     }
+        // }
+
+
+        //  // Function to handle address search
+        // function searchAddress() {
+        //     // Get the user input from the input box
+        //     const userInput = addressInput.value;
+        //     autocompleteItems.innerHTML = '';
+        //     autocompleteItems.style.display = userInput.length > 0 ? 'block' : 'none';
+
+        //     // Show all conference names in autocomplete
+        //     conferences.forEach(conference => {
+        //         const item = document.createElement('div');
+        //         // item.classList.add('autocomplete-item');
+        //         item.innerText = conference.name;
+        //         item.addEventListener('click', () => {
+        //             addressInput.value = conference.name;
+        //             // autocompleteItems.innerHTML = '';
+        //             // onAddressSelected(conference); // Pass the conference object here
+        //         });
+        //         autocompleteItems.appendChild(item);
+        //     });
+        // }
+
+
+        // // Function to calculate distance using Haversine formula
+        // function haversineDistance(lat1, lon1, lat2, lon2) {
+        //     const R = 3958.8; // Radius of the earth in miles
+        //     const dLat = (lat2 - lat1) * Math.PI / 180;
+        //     const dLon = (lon2 - lon1) * Math.PI / 180;
+        //     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        //         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        //         Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        //     const distance = R * c;
+        //     return distance;
+        // }
+
+        // // Function to get the latitude and longitude of an address using Nominatim API
+        // async function getGeocode(address) {
+        //     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        //     try {
+        //         const response = await fetch(url);
+        //         const data = await response.json();
+        //         if (data.length > 0) {
+        //             return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        //         } else {
+        //             throw new Error('Address not found.');
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //         throw error;
+        //     }
+        // }
+
+    //    // Function to get the current location using the Geolocation API
+    //     async function getCurrentLocation() {
+    //         return new Promise((resolve, reject) => {
+    //             if (navigator.geolocation) {
+    //                 navigator.geolocation.getCurrentPosition(
+    //                     position => {
+    //                         const { latitude, longitude } = position.coords;
+    //                         resolve({ lat: latitude, lon: longitude });
+    //                     },
+    //                     error => reject(error)
+    //                 );
+    //             } else {
+    //                 reject(new Error('Geolocation is not supported by this browser.'));
+    //             }
+    //         });
+    //     }
+
+        // Function to calculate and display the closest conferences
+        // async function calculateClosestConferences(targetGeocode) {
+        //     try {
+        //         showLoader();
+
+        //         // Calculate distances and sort conferences by distance
+        //         const conferencesWithDistances = conferences.map(conference => {
+        //             const distance = haversineDistance(
+        //                 targetGeocode.lat, targetGeocode.lon,
+        //                 conference.lat, conference.lon
+        //             );
+        //             return { ...conference, distance };
+        //         });
+
+        //         // Sort conferences by distance
+        //         conferencesWithDistances.sort((a, b) => a.distance - b.distance);
+
+        //         // Display the top 3 closest conferences
+        //         const closestConferences = conferencesWithDistances.slice(0, 5);
+        //         const closestConferenceElement = document.getElementById('closestConference');
+        //         closestConferenceElement.innerHTML = '<strong>Closest Conferences:</strong><br>';
+
+        //         closestConferences.forEach((conference, index) => {
+        //             closestConferenceElement.innerHTML +=
+        //                 `${index + 1}. ${conference.name} (${conference.distance.toFixed(2)} km)<br>`;
+        //         });
+
+        //         hideLoader();
+        //     } catch (error) {
+        //         hideLoader();
+        //         console.error(error);
+        //     }
+        // }
+        
+
+        // // Event listener for the submit button
+        // const submitBtn = document.getElementById('submitBtn');
+        // submitBtn.addEventListener('click', () => {
+        //     const selectedAddress = addressInput.value.trim();
+        //     if (selectedAddress === '') {
+        //         getCurrentLocation()
+        //             .then(currentGeocode => {
+        //                 calculateClosestConferences(currentGeocode);
+        //             })
+        //             .catch(error => {
+        //                 console.error(error);
+        //             });
+        //     } else {
+        //         getGeocode(selectedAddress)
+        //             .then(selectedGeocode => {
+        //                 calculateClosestConferences(selectedGeocode);
+        //             })
+        //             .catch(error => {
+        //                 console.error(error);
+        //             });
+        //     }
+        // });
 
 
         // Event listener to handle address selection
-        async function onAddressSelected(conference) {
-            try {
-                showLoader();
+        // async function onAddressSelected(conference) {
+        //     try {
+        //         showLoader();
 
-                const selectedAddress = addressInput.value;
+        //         const selectedAddress = addressInput.value;
 
-                // Get the latitude and longitude of the selected address using Nominatim API
-                const selectedGeocode = await getGeocode(selectedAddress);
+        //         // Get the latitude and longitude of the selected address using Nominatim API
+        //         const selectedGeocode = await getGeocode(selectedAddress);
 
+        //         // Get the latitude and longitude of the current location using Geolocation API
+        //         const customAddress = document.getElementById('customAddressInput').value;
+        //         let currentGeocode;
 
+        //         if (customAddress.length > 0) {
+        //             currentGeocode = await getGeocode(customAddress);
+        //         } else {
+        //             currentGeocode = await getCurrentLocation();
+        //         }
 
-                // Get the latitude and longitude of the current location using Geolocation API
-                const customAddress = document.getElementById('customAddressInput').value;
-                let currentGeocode;
+        //         // Get the name of the current location using Nominatim API
+        //         const currentLocationName = await getLocationName(currentGeocode.lat, currentGeocode.lon);
 
-                if (customAddress.length > 0) {
-                    currentGeocode = await getGeocode(customAddress);
-                } else {
-                    currentGeocode = await getCurrentLocation();
-                    // console.log(`i am current: ${currentGeocode}`)
-
-                }
-
-                // Get the name of the current location using Nominatim API
-                const currentLocationName = await getLocationName(currentGeocode.lat, currentGeocode.lon);
-
-                // Calculate the distance between the selected address and the conference's address
-                const distance = haversineDistance(
-                    selectedGeocode.lat, selectedGeocode.lon,
-                    // conference.lat, conference.lon,
-                    currentGeocode.lat, currentGeocode.lon,
+        //         // Calculate the distance between the selected address and the conference's address
+        //         const distance = haversineDistance(
+        //             selectedGeocode.lat, selectedGeocode.lon,
+        //             // conference.lat, conference.lon,
+        //             currentGeocode.lat, currentGeocode.lon,
                     
-                );
+        //         );
 
-                // Calculate the distance between the current location and the conference's address
-                const distanceToCurrent = haversineDistance(
-                    currentGeocode.lat, currentGeocode.lon,
-                    // conference.lat, conference.lon,
-                    selectedGeocode.lat, selectedGeocode.lon,
-                );
+        //         // Calculate the distance between the current location and the conference's address
+        //         const distanceToCurrent = haversineDistance(
+        //             currentGeocode.lat, currentGeocode.lon,
+        //             // conference.lat, conference.lon,
+        //             selectedGeocode.lat, selectedGeocode.lon,
+        //         );
 
-                // Display the closest conference below the input bar
-                const closestConference = document.getElementById('closestConference');
-                closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} km)`;
-                closestConference.innerHTML += `<br><strong>Distance from ${currentLocationName} to ${conference.name}: </strong> ${distanceToCurrent.toFixed(2)} km`;
+        //         // Display the closest conference below the input bar
+        //         const closestConference = document.getElementById('closestConference');
+        //         closestConference.innerHTML = `<strong>Closest Conference:</strong> ${conference.name} (${distance.toFixed(2)} miles)`;
+        //         closestConference.innerHTML += `<br><strong>Distance from ${currentLocationName} to ${conference.name}: </strong> ${distanceToCurrent.toFixed(2)} miles`;
 
-                hideLoader();
+        //         hideLoader();
 
-            } catch (error) {
-                hideLoader();
-                // Handle any errors that may occur during distance calculation
-                console.error(error);
+        //     } catch (error) {
+        //         hideLoader();
+        //         // Handle any errors that may occur during distance calculation
+        //         console.error(error);
 
-            }
-        }
+        //     }
+        // }
 
         // Load conference data and initialize autocomplete
         fetchConferenceData().then(() => {
