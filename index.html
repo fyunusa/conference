@@ -127,7 +127,7 @@
         }
 
          // Function to calculate distance using Haversine formula
-         function haversineDistance(lat1, lon1, lat2, lon2) {
+        function haversineDistance(lat1, lon1, lat2, lon2) {
             const R = 3958.8; // Radius of the earth in miles
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -138,6 +138,7 @@
             const distance = R * c;
             return distance;
         }
+
 
         // Function to fetch the conference data from the JSON file
         async function fetchConferenceData() {
@@ -203,7 +204,7 @@
 
                 closestConferences.forEach((conference, index) => {
                     closestConferenceElement.innerHTML +=
-                        `${index + 1}. ${conference.name} (${conference.distance.toFixed(2)} km)<br>`;
+                        `${index + 1}. ${conference.name} (${conference.distance.toFixed(2)} miles)<br>`;
                 });
 
                 hideLoader();
@@ -212,6 +213,7 @@
                 console.error(error);
             }
         }
+
 
         // Event listener for the submit button
         const submitBtn = document.getElementById('submitBtn');
