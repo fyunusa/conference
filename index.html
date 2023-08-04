@@ -211,6 +211,14 @@
                 const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
                 closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
 
+                // Clear the inner HTML of elements
+                closestConferenceElement.innerHTML = '';
+                closestConferenceElement2.innerHTML = '';
+                closestConferenceElementName.innerHTML = '';
+                closestConferenceElementAddress.innerHTML = '';
+                closestConferenceElementPhone.innerHTML = '';
+                closestConferenceElementDistance.innerHTML = '';
+
                 closestConferences.forEach((conference, index) => {
                     closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
                     closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
