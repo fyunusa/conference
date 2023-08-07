@@ -274,53 +274,53 @@ async function calculateClosestConferences(targetGeocode) {
 
 
         // Display the top 5 closest conferences with ranks
-        // const closestConferences = conferencesWithDistances.slice(0, 1);
-        // const closestConferenceList = document.getElementById('closestConferenceList');
-        // const closestConferenceElement = document.getElementById('closestConference');
-        // const closestConferenceElementName = document.getElementById('closestConferenceName');
-
-        // closestConferenceList.innerHTML = ''; // Clear previous results
-        // closestConferenceElement.innerHTML = '';
-
-        // closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
-        // closestConferences.forEach((conference, index) => {
-        //     const rank = index + 1; // Calculate the rank (1-based index)
-        //     const conferenceDiv = document.createElement('div');
-        //     conferenceDiv.classList.add('conference-item');
-        //     conferenceDiv.innerHTML = `
-        //         <strong>${rank}:</strong><br>
-        //         <strong>Name:</strong> ${conference.name}<br>
-        //         <strong>Address:</strong> ${conference.address}<br>
-        //         <strong>Phone:</strong> ${conference.phone}<br>
-        //         <strong>Distance:</strong> ${conference.distance1.toFixed(2)} km (${conference.distance2.toFixed(2)} miles)<br><br>
-        //     `;
-        //     closestConferenceList.appendChild(conferenceDiv);
-        // });
-
-        // Display the top 3 closest conferences
-        const closestConferences = conferencesWithDistances.slice(0, 1);
+        const closestConferences = conferencesWithDistances.slice(0, 5);
+        const closestConferenceList = document.getElementById('closestConferenceList');
         const closestConferenceElement = document.getElementById('closestConference');
-        const closestConferenceElement2 = document.getElementById('closestConference2');
         const closestConferenceElementName = document.getElementById('closestConferenceName');
-        const closestConferenceElementAddress = document.getElementById('closestConferenceAddress');
-        const closestConferenceElementPhone = document.getElementById('closestConferencePhone');
-        const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
 
-        // Clear the inner HTML of elements
+        closestConferenceList.innerHTML = ''; // Clear previous results
         closestConferenceElement.innerHTML = '';
-        closestConferenceElement2.innerHTML = '';
-        closestConferenceElementName.innerHTML = '';
-        closestConferenceElementAddress.innerHTML = '';
-        closestConferenceElementPhone.innerHTML = '';
-        closestConferenceElementDistance.innerHTML = '';
 
         closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
         closestConferences.forEach((conference, index) => {
-            closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
-            closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
-            closestConferenceElementPhone.innerHTML += `Phone: ${conference.phone}`;
-            closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance1.toFixed(2)} km \n ${conference.distance2.toFixed(2)} miles`;
+            const rank = index + 1; // Calculate the rank (1-based index)
+            const conferenceDiv = document.createElement('div');
+            conferenceDiv.classList.add('conference-item');
+            conferenceDiv.innerHTML = `
+                <strong>${rank}:</strong><br>
+                <strong>Name:</strong> ${conference.name}<br>
+                <strong>Address:</strong> ${conference.address}<br>
+                <strong>Phone:</strong> ${conference.phone}<br>
+                <strong>Distance:</strong> ${conference.distance1.toFixed(2)} km (${conference.distance2.toFixed(2)} miles)<br><br>
+            `;
+            closestConferenceList.appendChild(conferenceDiv);
         });
+
+        // // Display the top 3 closest conferences
+        // const closestConferences = conferencesWithDistances.slice(0, 1);
+        // const closestConferenceElement = document.getElementById('closestConference');
+        // const closestConferenceElement2 = document.getElementById('closestConference2');
+        // const closestConferenceElementName = document.getElementById('closestConferenceName');
+        // const closestConferenceElementAddress = document.getElementById('closestConferenceAddress');
+        // const closestConferenceElementPhone = document.getElementById('closestConferencePhone');
+        // const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
+
+        // // Clear the inner HTML of elements
+        // closestConferenceElement.innerHTML = '';
+        // closestConferenceElement2.innerHTML = '';
+        // closestConferenceElementName.innerHTML = '';
+        // closestConferenceElementAddress.innerHTML = '';
+        // closestConferenceElementPhone.innerHTML = '';
+        // closestConferenceElementDistance.innerHTML = '';
+
+        // closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
+        // closestConferences.forEach((conference, index) => {
+        //     closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
+        //     closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
+        //     closestConferenceElementPhone.innerHTML += `Phone: ${conference.phone}`;
+        //     closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance1.toFixed(2)} km \n ${conference.distance2.toFixed(2)} miles`;
+        // });
 
         hideLoader();
     } catch (error) {
