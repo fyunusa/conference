@@ -107,6 +107,8 @@
         <div class="results" id="closestConferenceAddress"></div>
         <div class="results" id="closestConferencePhone"></div>
         <div class="results" id="closestConferenceDistance"></div>
+        <div id="closestConferenceList" class="results"></div>
+
 
         <div class="loader" id="loader"></div>
         <input type="text" id="closestConferenceName" value="" hidden>
@@ -268,6 +270,8 @@
                 const data = await response.json();
                 conferences = data.conferences;
 
+                const addressesToRetry = []; // To store addresses for which geocode fetch failed
+
                 // Fetch geocode (latitude and longitude) for each conference address
                 for (const conference of conferences) {
                     try {
@@ -276,12 +280,28 @@
                         conference.lon = geocode.lon;
                     } catch (error) {
                         console.error(`Error fetching geocode for conference '${conference.name}':`, error);
+                        addressesToRetry.push(conference.address);
+                    }
+                }
+
+                // Retry fetching geocode for addresses that failed
+                for (const address of addressesToRetry) {
+                    try {
+                        const geocode = await getGeocode(address);
+                        const conference = conferences.find(conf => conf.address === address);
+                        if (conference) {
+                            conference.lat = geocode.lat;
+                            conference.lon = geocode.lon;
+                        }
+                    } catch (error) {
+                        console.error(`Error retrying geocode for address '${address}':`, error);
                     }
                 }
             } catch (error) {
                 console.error('Error fetching conference data:', error);
             }
         }
+
 
             // Function to get the current location using the Geolocation API
             async function getCurrentLocation() {
@@ -301,101 +321,53 @@
         }
 
         // Function to calculate and display the closest conferences
-        async function calculateClosestConferences(targetGeocode) {
-            try {
-                showLoader();
-
-                // Calculate distances and sort conferences by distance
-                const conferencesWithDistances = conferences.map(conference => {
-                    // const distance = haversineDistance(
-                    //     targetGeocode.lat, targetGeocode.lon,
-                    //     conference.lat, conference.lon
-                    // );
-                    const distance = getDistanceFromLatLonInKm(
-                        targetGeocode.lat, targetGeocode.lon,
-                        conference.lat, conference.lon);
-                    return { ...conference, distance1: distance[0] , distance2: distance[1] };
-                });
-
-                // Sort conferences by distance
-                conferencesWithDistances.sort((a, b) => a.distance1 - b.distance2);
-
-                // console.log(conferencesWithDistances);
-
-                //extract the distance2
-                const distances2 = conferencesWithDistances.map(conference => conference.distance2);
-
-                // Display the top 3 closest conferences
-                const closestConferences = conferencesWithDistances.slice(0, 1);
-                const closestConferenceElement = document.getElementById('closestConference');
-                const closestConferenceElement2 = document.getElementById('closestConference2');
-                const closestConferenceElementName = document.getElementById('closestConferenceName');
-                const closestConferenceElementAddress = document.getElementById('closestConferenceAddress');
-                const closestConferenceElementPhone = document.getElementById('closestConferencePhone');
-                const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
-
-                // Clear the inner HTML of elements
-                closestConferenceElement.innerHTML = '';
-                closestConferenceElement2.innerHTML = '';
-                closestConferenceElementName.innerHTML = '';
-                closestConferenceElementAddress.innerHTML = '';
-                closestConferenceElementPhone.innerHTML = '';
-                closestConferenceElementDistance.innerHTML = '';
-
-                closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
-                closestConferences.forEach((conference, index) => {
-                    closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
-                    closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
-                    closestConferenceElementPhone.innerHTML += `Phone: ${conference.phone}`;
-                    closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance1.toFixed(2)} km \n ${conference.distance2.toFixed(2)} miles`;
-                });
-
-                hideLoader();
-            } catch (error) {
-                hideLoader();
-                console.error(error);
-            }
-        }
-
-        // Function to calculate and display the closest conferences
         // async function calculateClosestConferences(targetGeocode) {
         //     try {
         //         showLoader();
 
-        //         // Create an array of coordinate pairs for all conferences
-        //         const coordinates = conferences.map(conference => [conference.lon, conference.lat]);
-
-        //         // Fetch distances for all coordinate pairs in a single API call
-        //         const distances = await calculateDistances(targetGeocode.lon, targetGeocode.lat, coordinates);
-
-        //         // Assign distances to conferences
-        //         for (let i = 0; i < conferences.length; i++) {
-        //             conferences[i].distance = distances[i];
-        //         }
+        //         // Calculate distances and sort conferences by distance
+        //         const conferencesWithDistances = conferences.map(conference => {
+        //             // const distance = haversineDistance(
+        //             //     targetGeocode.lat, targetGeocode.lon,
+        //             //     conference.lat, conference.lon
+        //             // );
+        //             const distance = getDistanceFromLatLonInKm(
+        //                 targetGeocode.lat, targetGeocode.lon,
+        //                 conference.lat, conference.lon);
+        //             return { ...conference, distance1: distance[0] , distance2: distance[1] };
+        //         });
 
         //         // Sort conferences by distance
-        //         conferences.sort((a, b) => a.distance - b.distance);
+        //         conferencesWithDistances.sort((a, b) => a.distance1 - b.distance2);
 
-        //         // Display the closest conference details
+        //         // console.log(conferencesWithDistances);
+
+        //         //extract the distance2
+        //         const distances2 = conferencesWithDistances.map(conference => conference.distance2);
+
+        //         // Display the top 3 closest conferences
+        //         const closestConferences = conferencesWithDistances.slice(0, 1);
         //         const closestConferenceElement = document.getElementById('closestConference');
-        //         closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
-                
         //         const closestConferenceElement2 = document.getElementById('closestConference2');
+        //         const closestConferenceElementName = document.getElementById('closestConferenceName');
         //         const closestConferenceElementAddress = document.getElementById('closestConferenceAddress');
         //         const closestConferenceElementPhone = document.getElementById('closestConferencePhone');
         //         const closestConferenceElementDistance = document.getElementById('closestConferenceDistance');
 
         //         // Clear the inner HTML of elements
+        //         closestConferenceElement.innerHTML = '';
         //         closestConferenceElement2.innerHTML = '';
+        //         closestConferenceElementName.innerHTML = '';
         //         closestConferenceElementAddress.innerHTML = '';
         //         closestConferenceElementPhone.innerHTML = '';
         //         closestConferenceElementDistance.innerHTML = '';
 
-        //         conferences.slice(0, 1).forEach(conference => {
+        //         closestConferenceElement.innerHTML = `<strong>Closest Conferences to ${closestConferenceElementName.value }: </strong><br>`;
+        //         closestConferences.forEach((conference, index) => {
         //             closestConferenceElement2.innerHTML += `Name: ${conference.name}`;
         //             closestConferenceElementAddress.innerHTML += `Address: ${conference.address}`;
         //             closestConferenceElementPhone.innerHTML += `Phone: ${conference.phone}`;
-        //             closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance.toFixed(2)} miles`;
+        //             closestConferenceElementDistance.innerHTML += `Distance: ${conference.distance1.toFixed(2)} km \n ${conference.distance2.toFixed(2)} miles`;
         //         });
 
         //         hideLoader();
@@ -404,6 +376,51 @@
         //         console.error(error);
         //     }
         // }
+
+            // Function to calculate and display the closest conferences
+async function calculateClosestConferences(targetGeocode) {
+    try {
+        showLoader();
+
+        // Calculate distances and sort conferences by distance
+        const conferencesWithDistances = conferences.map(conference => {
+            const distance = getDistanceFromLatLonInKm(
+                targetGeocode.lat, targetGeocode.lon,
+                conference.lat, conference.lon
+            );
+            return { ...conference, distance1: distance[0], distance2: distance[1] };
+        });
+
+        // Sort conferences by distance
+        conferencesWithDistances.sort((a, b) => a.distance1 - b.distance2);
+
+        // Display the top 5 closest conferences with ranks
+        const closestConferences = conferencesWithDistances.slice(0, 5);
+        const closestConferenceList = document.getElementById('closestConferenceList');
+        closestConferenceList.innerHTML = ''; // Clear previous results
+
+        closestConferences.forEach((conference, index) => {
+            const rank = index + 1; // Calculate the rank (1-based index)
+            const conferenceDiv = document.createElement('div');
+            conferenceDiv.classList.add('conference-item');
+            conferenceDiv.innerHTML = `
+                <strong>${rank}:</strong><br>
+                <strong>Name:</strong> ${conference.name}<br>
+                <strong>Address:</strong> ${conference.address}<br>
+                <strong>Phone:</strong> ${conference.phone}<br>
+                <strong>Distance:</strong> ${conference.distance1.toFixed(2)} km (${conference.distance2.toFixed(2)} miles)<br><br>
+            `;
+            closestConferenceList.appendChild(conferenceDiv);
+        });
+
+        hideLoader();
+    } catch (error) {
+        hideLoader();
+        console.error(error);
+    }
+}
+
+
 
 
 
@@ -438,15 +455,17 @@
             }
         });
 
-        // Function to get the latitude and longitude of an address using Nominatim API
+        // Function to get the latitude and longitude of an address using MapQuest Geocoding API
         async function getGeocode(address) {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+            const apiKey = 'kJWAsPGVWtqTOYwjFVtSrzyKD0RQpZW5'; // Replace with your MapQuest API key
+            const url = `https://www.mapquestapi.com/geocoding/v1/address?key=${apiKey}&location=${encodeURIComponent(address)}`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                if (data.length > 0) {
-                    return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+                if (data.results && data.results.length > 0) {
+                    const location = data.results[0].locations[0];
+                    return { lat: location.latLng.lat, lon: location.latLng.lng };
                 } else {
                     throw new Error('Address not found.');
                 }
@@ -455,6 +474,25 @@
                 throw error;
             }
         }
+
+
+        // // Function to get the latitude and longitude of an address using Nominatim API
+        // async function getGeocode(address) {
+        //     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        //     try {
+        //         const response = await fetch(url);
+        //         const data = await response.json();
+        //         if (data.length > 0) {
+        //             return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        //         } else {
+        //             throw new Error('Address not found.');
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //         throw error;
+        //     }
+        // }
 
         // Function to get the location name using the Nominatim API
         async function getLocationName(lat, lon) {
