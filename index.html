@@ -456,24 +456,24 @@ async function calculateClosestConferences(targetGeocode) {
         });
 
         // Function to get the latitude and longitude of an address using MapQuest Geocoding API
-        async function getGeocode(address) {
-            const apiKey = 'kJWAsPGVWtqTOYwjFVtSrzyKD0RQpZW5'; // Replace with your MapQuest API key
-            const url = `https://www.mapquestapi.com/geocoding/v1/address?key=${apiKey}&location=${encodeURIComponent(address)}`;
+        // async function getGeocode(address) {
+        //     const apiKey = 'kJWAsPGVWtqTOYwjFVtSrzyKD0RQpZW5'; // Replace with your MapQuest API key
+        //     const url = `https://www.mapquestapi.com/geocoding/v1/address?key=${apiKey}&location=${encodeURIComponent(address)}`;
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.results && data.results.length > 0) {
-                    const location = data.results[0].locations[0];
-                    return { lat: location.latLng.lat, lon: location.latLng.lng };
-                } else {
-                    throw new Error('Address not found.');
-                }
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        }
+        //     try {
+        //         const response = await fetch(url);
+        //         const data = await response.json();
+        //         if (data.results && data.results.length > 0) {
+        //             const location = data.results[0].locations[0];
+        //             return { lat: location.latLng.lat, lon: location.latLng.lng };
+        //         } else {
+        //             throw new Error('Address not found.');
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //         throw error;
+        //     }
+        // }
 
 
         // // Function to get the latitude and longitude of an address using Nominatim API
